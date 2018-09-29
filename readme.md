@@ -2,4 +2,5 @@
 Сервис админ панели здесь - https://codepen.io/yyyyeeeeesss/pen/PdrdYW
 
 # Запуск
-php artisan bus:listen
+docker-compose exec php /usr/bin/php /var/flespi/artisan bus:listen
+

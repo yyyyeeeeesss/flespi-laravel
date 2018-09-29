@@ -15,7 +15,7 @@ class UpdateUser extends UpdateMethod implements MethodInterface
 
             $rolesIds = array_column($options['roles'] ?? [], 'value') ?: [];
             $response = $user->save();
-            print_r($rolesIds);
+
             $user->roles()->sync($rolesIds);
 
             $this->service

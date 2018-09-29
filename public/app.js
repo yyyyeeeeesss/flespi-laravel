@@ -7,11 +7,11 @@ class FlespiService {
     subscrible(subscribles, callback) {
         let client = this.client()
 
-        subscribles.forEach(v = > {
+        subscribles.forEach(v => {
             client.subscribe(v)
     });
 
-        client.on('message', callback)
+        client.on('message',  callback)
     }
 
     client() {
@@ -35,14 +35,12 @@ class FlespiService {
     }
 
     call(method, params, callback) {
-        let topicResponse = "v1/" + method + "/reply/" + Math.random().toString(36).substr(2, 9)
+        let topicResponse = "v1/"+method+"/reply/"+ Math.random().toString(36).substr(2, 9)
         let client = this.client()
 
         client.subscribe(topicResponse)
-        client.on('message', (topic, message) = > {
-            if(topicResponse == topic
-    )
-        {
+        client.on('message', (topic, message) => {
+            if (topicResponse == topic) {
             callback(topic, message)
         }
 
@@ -58,7 +56,7 @@ class FlespiService {
 
 new Vue({
     el: '#app',
-    data() {
+    data () {
         return {
             totalItems: 0,
             activator: 1,
@@ -67,7 +65,7 @@ new Vue({
             loading: true,
             userRoles: [],
             pagination: {},
-            pageItems: [5, 10, 25],
+            pageItems: [5,10,25],
             search: null,
             modelRole: [],
             modelUserRole: [],
@@ -106,10 +104,8 @@ new Vue({
         modelRole(val, prev) {
             if (val.length === prev.length) return
 
-            this.modelRole = val.map(v = > {
-                if(typeof v.title === 'string'
-        )
-            {
+            this.modelRole = val.map(v => {
+                if (typeof v.title === 'string') {
                 v = {
                     title: v.title,
                     id: v.id
@@ -124,15 +120,15 @@ new Vue({
         },
 
         pagination: {
-            handler() {
+            handler () {
                 this.getDataFromApi({
                     'rowsPerPage': this.pagination.rowsPerPage,
                     'page': this.pagination.page,
-                    'roles': this.modelRole.map(function (currentValue, index, array) {
+                    'roles':  this.modelRole.map(function(currentValue, index, array) {
                         return currentValue.id;
                     })
                 })
-                    .then(data = > {
+                    .then(data => {
                     this.items = data.items
                 this.totalItems = data.total
             })
@@ -140,12 +136,12 @@ new Vue({
             deep: true
         }
     },
-    mounted() {
+    mounted () {
         this.subscrible()
         this.subscribleUpdateRole()
 
         this.getRolesFromApi()
-            .then(data = > {
+            .then(data => {
             this.roles = data.items
         this.userRoles = data.items.map(function callback(currentValue, index, array) {
             return {"value": currentValue.id, "text": currentValue.title}
@@ -155,39 +151,39 @@ new Vue({
         this.getDataFromApi({
             'rowsPerPage': this.pagination.rowsPerPage,
             'page': this.pagination.page,
-            'roles': this.modelRole.map(function (currentValue, index, array) {
+            'roles':  this.modelRole.map(function(currentValue, index, array) {
                 return currentValue.id;
             })
         })
-            .then(data = > {
+            .then(data => {
             this.items = data.items
         this.totalItems = data.total
     })
     },
     methods: {
-        subscrible() {
+        subscrible () {
             this.service.subscrible([
                 'v1/events/update/user',
-            ], (topic, message) = > {
+            ], (topic, message) => {
                 this.getDataFromApi({
                 'rowsPerPage': this.pagination.rowsPerPage,
                 'page': this.pagination.page,
-                'roles': this.modelRole.map(function (currentValue, index, array) {
+                'roles':  this.modelRole.map(function(currentValue, index, array) {
                     return currentValue.id;
                 })
             })
-                .then(data = > {
+                .then(data => {
                 this.items = data.items
             this.totalItems = data.total
         })
         })
         },
 
-        subscribleUpdateRole() {
+        subscribleUpdateRole () {
 
             this.service.subscrible([
                 'v1/events/update/role',
-            ], (topic, message) = > {
+            ], (topic, message) => {
                 let response = JSON.parse(message.toString())
 
                 this.modelRole.push({
@@ -198,11 +194,11 @@ new Vue({
             this.getDataFromApi({
                 'rowsPerPage': this.pagination.rowsPerPage,
                 'page': this.pagination.page,
-                'roles': this.modelRole.map(function (currentValue, index, array) {
+                'roles':  this.modelRole.map(function(currentValue, index, array) {
                     return currentValue.id;
                 })
             })
-                .then(data = > {
+                .then(data => {
                 this.items = data.items
             this.totalItems = data.total
         })
@@ -210,25 +206,24 @@ new Vue({
         },
 
         getRolesFromApi() {
-            return new Promise((resolve, reject) = > {
+            return new Promise((resolve, reject) => {
 
-                this.service.call('get/roles', [], (topic, message) = > {
+                this.service.call('get/roles', [], (topic, message) => {
                 let response = JSON.parse(message.toString())
                 let items = response.items
 
                 resolve({
                             items
                         })
-            }
-        )
+            })
         })
         },
 
-        getDataFromApi(options = {}) {
+        getDataFromApi (options = {}) {
             this.loading = true
-            return new Promise((resolve, reject) = > {
+            return new Promise((resolve, reject) => {
 
-                this.service.call('get/users', options, (topic, message) = > {
+                this.service.call('get/users', options, (topic, message) => {
                 this.loading = false
             let response = JSON.parse(message.toString())
             let items = response.items
@@ -242,40 +237,38 @@ new Vue({
         })
         },
 
-        editItem(item) {
+        editItem (item) {
             this.editedIndex = this.items.indexOf(item)
             this.editedItem = Object.assign({}, item)
 
-            this.editedItem.roles = this.editedItem.roles.map(function (currentValue, index, array) {
+            this.editedItem.roles = this.editedItem.roles.map(function(currentValue, index, array) {
                 return {"text": currentValue.title, "value": currentValue.id};
             });
 
             this.dialog = true
         },
 
-        deleteItem(item) {
+        deleteItem (item) {
             const index = this.items.indexOf(item)
             confirm('Are you sure you want to delete this item?') && this.items.splice(index, 1)
         },
 
-        close() {
+        close () {
             this.dialog = false
             this.modelUserRole = []
-            setTimeout(() = > {
+            setTimeout(() => {
                 this.editedItem = Object.assign({}, this.defaultItem)
             this.editedIndex = -1
-        },
-            300
-        )
+        }, 300)
         },
 
-        save() {
+        save () {
             this.service.event('update/user', this.editedItem)
             this.modelUserRole = []
             this.close()
         },
 
-        editRole(index, item) {
+        editRole (index, item) {
             if (!this.editingRole) {
                 this.editingRole = item
                 this.indexRole = index
@@ -286,15 +279,16 @@ new Vue({
             }
         },
 
-        changeRole() {
+        changeRole()
+        {
             this.getDataFromApi({
                 'rowsPerPage': this.pagination.rowsPerPage,
                 'page': this.pagination.page,
-                'roles': this.modelRole.map(function (currentValue, index, array) {
+                'roles':  this.modelRole.map(function(currentValue, index, array) {
                     return currentValue.id;
                 })
             })
-                .then(data = > {
+                .then(data => {
                 this.items = data.items
             this.totalItems = data.total
         })
@@ -304,11 +298,9 @@ new Vue({
             this.service.event('update/role', {'title': this.search})
         },
 
-        filter(item, queryText, itemText) {
+        filter (item, queryText, itemText) {
 
-            const hasValue = val =
-        >
-            val != null ? val : ''
+            const hasValue = val => val != null ? val : ''
             const text = hasValue(itemText)
             const query = hasValue(queryText)
 
