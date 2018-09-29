@@ -1,0 +1,161 @@
+<div id="app">
+    <v-app id="inspire">
+        <div>
+            <v-card flat>
+                <v-card-text>
+                    <v-toolbar flat color="white">
+                        <v-toolbar-title>Users</v-toolbar-title>
+                        <v-divider
+                                class="mx-2"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <v-spacer></v-spacer>
+
+                        <v-combobox
+                                v-model="modelRole"
+                                :filter="filter"
+                                :hide-no-data="!search"
+                                :items="roles"
+                                :search-input.sync="search"
+                                hide-selected
+                                label="Search for an option role"
+                                multiple
+                                small-chips
+                                @input="changeRole()"
+                                solo
+                        >
+                            <template slot="no-data">
+                                <v-list-tile>
+                                    <span class="subheading">Create</span>
+                                    <v-chip
+                                            :color="`${colors[nonce - 1]} lighten-3`"
+                                            label
+                                            small
+                                            @click="createRole()"
+                                    >
+                                        {{ search }}
+                                    </v-chip>
+                                </v-list-tile>
+                            </template>
+                            <template
+                                    v-if="item === Object(item)"
+                                    slot="selection"
+                                    slot-scope="{ item, parent, selected }"
+                            >
+                                <v-chip
+                                        :color="`${item.color} lighten-3`"
+                                        :selected="selected"
+                                        label
+                                        small
+                                >
+          <span class="pr-2">
+            {{ item.title }}
+          </span>
+                                    <v-icon
+                                            small
+                                            @click="parent.selectItem(item)"
+                                    >close
+                                    </v-icon>
+                                </v-chip>
+                            </template>
+                            <template
+                                    slot="item"
+                                    slot-scope="{ index, item, parent }"
+                            >
+                                <v-list-tile-content>
+                                    <v-text-field
+                                            v-if="editingRole === item"
+                                            v-model="editingRole.title"
+                                            autofocus
+                                            flat
+                                            background-color="transparent"
+                                            hide-details
+                                            solo
+                                            @keyup.enter="editRole(index, item)"
+                                    ></v-text-field>
+                                    <v-chip
+                                            v-else
+                                            :color="`${item.color} lighten-3`"
+                                            dark
+                                            label
+                                            small
+                                    >
+                                        {{ item.title }}
+                                    </v-chip>
+                                </v-list-tile-content>
+                                <v-spacer></v-spacer>
+                                <v-list-tile-action @click.stop>
+                                    <v-btn
+                                            icon
+                                            @click.stop.prevent="editRole(index, item)"
+                                    >
+                                        <v-icon>{{ editingRole !== item ? 'edit' : 'check' }}</v-icon>
+                                    </v-btn>
+                                </v-list-tile-action>
+                            </template>
+                        </v-combobox>
+
+
+                        <v-dialog v-model="dialog" max-width="500px">
+                            <v-btn slot="activator" color="primary" dark class="mb-2">New User</v-btn>
+                            <v-card>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-layout wrap>
+                                            <v-flex xs12 sm6 md8>
+                                                <v-text-field v-model="editedItem.title" label="Title"></v-text-field>
+
+                                            </v-flex>
+
+                                            <v-flex xs12 sm6 md8>
+                                                <v-combobox
+                                                        v-model="editedItem.roles"
+                                                        :items="userRoles"
+                                                        label="Roles"
+                                                        multiple
+                                                        chips
+                                                ></v-combobox>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                </v-card-text>
+
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+                                    <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-toolbar>
+
+                    <v-data-table
+                            :headers="headers"
+                            :items="items"
+                            :pagination.sync="pagination"
+                            :total-items="totalItems"
+                            :loading="loading"
+                            :rows-per-page-items="pageItems"
+                            class="elevation-1"
+                    >
+                        <template slot="items" slot-scope="props">
+                            <td class="text-xs-left">{{ props.item.id }}</td>
+                            <td class="text-xs-right">{{ props.item.title }}</td>
+                            <td class="text-xs-right">
+                                <v-icon
+                                        small
+                                        class="mr-2"
+                                        @click="editItem(props.item)"
+                                >
+                                    edit
+                                </v-icon>
+                            </td>
+                        </template>
+                    </v-data-table>
+                </v-card-text>
+            </v-card>
+        </div>
+    </v-app>
+</div>
