@@ -47,33 +47,6 @@ class BusListen extends Command
      */
     public function handle()
     {
-        /*
-        $faker = Factory::create();
-        DB::table('roles')->delete();
-        DB::table('users')->delete();
-
-        for($i = 0; $i < 7;$i++) {
-            Role::create([
-                'title' => $faker->text(20)
-            ]);
-        }
-
-        $roles = Role::get();
-
-        for($i = 0; $i < 20000;$i++) {
-            $user = User::create([
-                'title' => $faker->text(50)
-            ]);
-
-            $rand = rand(0,6);
-            $ids = [];
-            for ($j =1; $j < $rand; $j++) {
-                $ids[] = $roles[$rand]->id;
-            }
-            $user->roles()->sync($ids);
-        }
-die();
-        */
         App::make(MqttService::class)->rpc([
             'v1/get/users' => GetUsers::class,
             'v1/update/user' => UpdateUser::class,

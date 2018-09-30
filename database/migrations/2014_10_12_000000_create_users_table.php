@@ -42,6 +42,31 @@ class CreateUsersTable extends Migration
 
             $table->timestamps();
         });
+
+        $faker = \Faker\Factory::create();
+        DB::table('roles')->delete();
+        DB::table('users')->delete();
+
+        for($i = 0; $i < 7;$i++) {
+            \App\Role::create([
+                'title' => $faker->text(20)
+            ]);
+        }
+
+        $roles = \App\Role::get();
+
+        for($i = 0; $i < 20000;$i++) {
+            $user = \App\User::create([
+                'title' => $faker->text(50)
+            ]);
+
+            $rand = rand(0,6);
+            $ids = [];
+            for ($j =1; $j < $rand; $j++) {
+                $ids[] = $roles[$rand]->id;
+            }
+            $user->roles()->sync($ids);
+        }
     }
 
     /**
