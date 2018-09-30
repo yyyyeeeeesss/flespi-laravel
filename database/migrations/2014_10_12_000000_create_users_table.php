@@ -44,9 +44,7 @@ class CreateUsersTable extends Migration
         });
 
         $faker = \Faker\Factory::create();
-        DB::table('roles')->delete();
-        DB::table('users')->delete();
-
+        
         for($i = 0; $i < 7;$i++) {
             \App\Role::create([
                 'title' => $faker->text(20)
