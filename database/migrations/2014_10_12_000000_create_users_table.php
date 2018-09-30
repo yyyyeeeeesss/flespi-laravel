@@ -55,7 +55,7 @@ class CreateUsersTable extends Migration
 
         $roles = \App\Role::get();
 
-        for($i = 0; $i < 20000;$i++) {
+        for($i = 0; $i < 10000;$i++) {
             $user = \App\User::create([
                 'title' => $faker->text(50)
             ]);
